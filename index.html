@@ -1,0 +1,86 @@
+<html>
+<head>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <meta charset="UTF-8"/>
+    <title>구구단</title>
+</head>
+
+<body>
+<div id="root"></div>
+<script type="text/babel">
+    class GuGuDan extends React.Component{ //구구단이라는 class 컴포넌트 하나 만들고
+        /*constructor(props){
+            super(props); //constructor는 안써도 됨 (this도 빼고)
+            this.state={ //객체 안에다가 바뀌는 것들을 속성으로 추가해주기 (바뀌는 부분-state: 숫자, input, 결과부분)- 바뀌어야 될 부분 여러 개이면 객체로!!
+                first: Math.ceil(Math.random()*9), //랜덤값
+                second: Math.ceil(Math.random()*9), //랜덤값
+                value: '',
+                result: '',
+            };
+        }*/
+        state={ //객체 안에다가 바뀌는 것들을 속성으로 추가해주기 (바뀌는 부분-state: 숫자, input, 결과부분)- 바뀌어야 될 부분 여러 개이면 객체로!!, 이게 실무에서 훨씬 많이 쓰임
+            first: Math.ceil(Math.random()*9), //랜덤값
+            second: Math.ceil(Math.random()*9), //랜덤값
+            value: '',
+            result: '',
+        };
+
+        //이렇게 함수처럼 따로 빼서 써도됨- 이땐 무조건 화살표 함수로!(this가 애매해줘서)- setState할 때마다(렌더링할 때 마다) render새로 실행 되어서, render안의 힘수 계속 새로 생김
+        onSubmit = (e) => { //form submit 했을 때 어떻게 되는지 (입력누르면 onSubmit 실행)
+                        e.preventDefault();
+                        if (parseInt(this.state.value)===this.state.first * this.state.second){
+                            this.setState( (prevState) => {  //예전 state 값을 현재 state 값으로 만들 때는, 이처럼 return 해주는 함수로!! (객체, 함수 쓸 때 구분)
+                                return{
+                                    result: this.state.first + 'X' + this.state.second + '=' + prevState.value + '정답!',
+                                    first: Math.ceil(Math.random()*9), //랜덤값
+                                    second: Math.ceil(Math.random()*9), //랜덤값
+                                    //value는 다시 비워져야 함
+                                    value: '',
+                                };
+                            });
+                            this.input.focus(); //계속 깜박 거리게
+                        }
+                        else{
+                            this.setState({
+                                result: '땡',
+                                value: '',
+                            });
+                        }
+                        this.input.focus(); //계속 깜박 거리게
+        };
+
+        onChange = (e) => {
+            this.setState({ value: e.target.value});
+        }
+        
+        onRefInput = (c) => { this.input = c; }
+        
+        input;
+
+        //컨텐츠
+        render(){//render는 화살표 함수 안써도됨
+            //결괏값 태그로 return
+            //태그 사이에 {}중괄호 넣으면, 중괄호에는 js를 넣을 수
+            //jsx에서는 싱글 태그에 닫는 태그를 꼭 항상 넣어줘야함!!!!!!
+            //state 바꿀 때는 setState!
+            //e는 이벤트 객체를 의미
+            return ( //쓸데 없는 div를 없애고 공백으로 써도 됨-babel이 지원하지 않음(babel 2가 지원), 오류나면 'React.Fragment' 써주면 됨, 소괄호 없어도 됨(그룹연산자)
+                <React.Fragment> 
+                    <div>{this.state.first}곱하기{this.state.second}는?</div>  
+                    <form onSubmit={this.onSubmit}>
+                        <input ref={this.onRefInput} type="number" value={this.state.value} onChange={this.onChange} />
+                        <button type="submit">입력!</button>
+                    </form>
+                    <div>{this.state.result}</div>
+                </React.Fragment>
+            ); 
+        }
+    }
+</script>
+<script type="text/babel">
+    ReactDOM.render(<div><GuGuDan /><GuGuDan /><GuGuDan /></div>, document.querySelector('#root')); //그 컴포넌트를 화면에 그리겠다
+</script>
+</body>
+</html>
